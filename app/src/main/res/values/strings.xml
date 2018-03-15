@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Climatix</string>
+    <string name="error_no_conectado">Device not connected to the network</string>
 </resources>
