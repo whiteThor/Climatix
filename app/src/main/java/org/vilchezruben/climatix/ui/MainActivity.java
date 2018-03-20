@@ -25,6 +25,7 @@ import java.io.IOException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.OkHttpClient;
@@ -51,9 +52,9 @@ public class MainActivity extends AppCompatActivity {
     ProgressBar mProgressBar;
     @BindView(R.id.refreshImageView)
     ImageView mImageRefress;
-    private double latitude = 4.598889;
-    private double longitude = -74.080833;
-    String foreCastUrl = "https://api.darksky.net/forecast/" + apikey + "/" + latitude + "," + longitude;
+    private double mLatitude = 4.598889;
+    private double mLongitude = -74.080833;
+    String foreCastUrl = "https://api.darksky.net/forecast/" + apikey + "/" + mLatitude + "," + mLongitude;
     private OkHttpClient clientHttp;
     private Forecast mForecast;
 
@@ -64,19 +65,28 @@ public class MainActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         clientHttp = new OkHttpClient();
 
-        getForecast(latitude, longitude);
+        getForecast(mLatitude, mLongitude);
+
 
     }
 
     private void getForecast(final double latitude, double longitude) {
-        toogleRefresh();
+
         Request request = new Request.Builder().url(foreCastUrl).build();
         if (isNetWorkAvailable()) {
+            toogleRefresh();
             clientHttp.newCall(request).enqueue(new Callback() {
                 @Override
                 public void onFailure(Call call, IOException e) {
+
                     e.getStackTrace();
                     alertUserAboutError(e.getMessage());
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            toogleRefresh();
+                        }
+                    });
                 }
 
                 @Override
@@ -92,11 +102,13 @@ public class MainActivity extends AppCompatActivity {
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
+                                    toogleRefresh();
                                     updateDisplay();
                                 }
                             });
                         } else {
                             alertUserAboutError(getString(R.string.error_no_conectado));
+
                         }
 
                     } catch (JSONException e) {
@@ -275,6 +287,21 @@ public class MainActivity extends AppCompatActivity {
         current.setOzone(currently.getDouble("ozone"));
 
         return current;
+
+    }
+
+    @OnClick(R.id.refreshImageView)
+    public void onClickRefreshImageView(View view) {
+        getForecast(mLatitude, mLongitude);
+    }
+
+    @OnClick(R.id.dailyButton)
+    public void startDailyActivity(View view) {
+
+    }
+
+    @OnClick(R.id.horlyButton)
+    public void startHourlyActivity(View view) {
 
     }
 

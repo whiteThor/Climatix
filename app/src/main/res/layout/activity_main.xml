@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:text="100"
+        android:text="--"
         android:textColor="@android:color/white"
         android:textSize="150sp" />
 
@@ -21,10 +21,10 @@
         android:id="@+id/imageViewDegree"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignTop="@+id/temperatureLabel"
-        android:layout_marginEnd="50dp"
-        android:layout_marginTop="41dp"
+        android:layout_below="@+id/timeLabel"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_toEndOf="@+id/timeLabel"
         app:srcCompat="@drawable/degree" />
 
     <TextView
@@ -33,7 +33,7 @@
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/temperatureLabel"
         android:layout_centerHorizontal="true"
-        android:text="At 5:00 PM it will"
+        android:text="At --:-- -- it will"
         android:textColor="#80ffffff"
         android:textSize="18sp" />
 
@@ -52,9 +52,9 @@
         android:id="@+id/iconImageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/temperatureLabel"
         android:layout_alignTop="@+id/locationLabel"
-        android:layout_marginStart="11dp"
+        android:layout_marginEnd="9dp"
+        android:layout_toStartOf="@+id/timeLabel"
         app:srcCompat="@drawable/cloudy_night" />
 
     <ImageView
@@ -73,7 +73,8 @@
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/refreshImageView"
         android:layout_alignTop="@+id/refreshImageView"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:visibility="invisible" />
 
     <LinearLayout
         android:id="@+id/linearLayout"
@@ -103,7 +104,7 @@
                 android:id="@+id/humidityValue"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="0.88"
+                android:text="--"
                 android:textAlignment="center"
                 android:textColor="@android:color/white"
                 android:textSize="24sp" />
@@ -128,7 +129,7 @@
                 android:id="@+id/precipValue"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="100%"
+                android:text="--%"
                 android:textAlignment="center"
                 android:textColor="@android:color/white"
                 android:textSize="24sp" />
@@ -172,7 +173,7 @@
             android:layout_marginLeft="2dp"
             android:layout_weight="1"
             android:background="#40ffffff"
-            android:text="Button"
+            android:text="7 DAY"
             android:textColor="#ffffffff" />
     </LinearLayout>
 </RelativeLayout>
