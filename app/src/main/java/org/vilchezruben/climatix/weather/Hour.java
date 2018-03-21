@@ -1,12 +1,26 @@
 package org.vilchezruben.climatix.weather;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Created by Vilchez Ruben on 14/03/2018.
  */
 
 
-public class Hour {
+public class Hour implements Parcelable {
 
+    public static final Creator<Hour> CREATOR = new Creator<Hour>() {
+        @Override
+        public Hour createFromParcel(Parcel in) {
+            return new Hour(in);
+        }
+
+        @Override
+        public Hour[] newArray(int size) {
+            return new Hour[size];
+        }
+    };
     private long time;
     private String summary;
     private String icon;
@@ -33,6 +47,28 @@ public class Hour {
 
     public Hour(String timeZone) {
         mTimeZone = timeZone;
+    }
+
+    protected Hour(Parcel in) {
+        time = in.readLong();
+        summary = in.readString();
+        icon = in.readString();
+        precipIntensity = in.readDouble();
+        precipProbability = in.readDouble();
+        precipType = in.readString();
+        temperature = in.readDouble();
+        apparentTemperature = in.readDouble();
+        dewPoint = in.readDouble();
+        humidity = in.readDouble();
+        pressure = in.readDouble();
+        windSpeed = in.readDouble();
+        windGust = in.readDouble();
+        windBearing = in.readDouble();
+        cloudCover = in.readDouble();
+        uvIndex = in.readLong();
+        visibility = in.readDouble();
+        ozone = in.readDouble();
+        mTimeZone = in.readString();
     }
 
     public long getTime() {
@@ -265,5 +301,50 @@ public class Hour {
 
     public void setTimeZone(String timeZone) {
         mTimeZone = timeZone;
+    }
+
+    /**
+     * Describe the kinds of special objects contained in this Parcelable
+     * instance's marshaled representation. For example, if the object will
+     * include a file descriptor in the output of {@link #writeToParcel(Parcel, int)},
+     * the return value of this method must include the
+     * {@link #CONTENTS_FILE_DESCRIPTOR} bit.
+     *
+     * @return a bitmask indicating the set of special object types marshaled
+     * by this Parcelable object instance.
+     */
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    /**
+     * Flatten this object in to a Parcel.
+     *
+     * @param dest  The Parcel in which the object should be written.
+     * @param flags Additional flags about how the object should be written.
+     *              May be 0 or {@link #PARCELABLE_WRITE_RETURN_VALUE}.
+     */
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(time);
+        dest.writeString(summary);
+        dest.writeString(icon);
+        dest.writeDouble(precipIntensity);
+        dest.writeDouble(precipProbability);
+        dest.writeString(precipType);
+        dest.writeDouble(temperature);
+        dest.writeDouble(apparentTemperature);
+        dest.writeDouble(dewPoint);
+        dest.writeDouble(humidity);
+        dest.writeDouble(pressure);
+        dest.writeDouble(windSpeed);
+        dest.writeDouble(windGust);
+        dest.writeDouble(windBearing);
+        dest.writeDouble(cloudCover);
+        dest.writeLong(uvIndex);
+        dest.writeDouble(visibility);
+        dest.writeDouble(ozone);
+        dest.writeString(mTimeZone);
     }
 }

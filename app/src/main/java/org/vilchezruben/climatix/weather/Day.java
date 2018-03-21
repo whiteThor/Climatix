@@ -1,11 +1,30 @@
 package org.vilchezruben.climatix.weather;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
+
 /**
  * Created by Vilchez Ruben on 13/03/2018.
  */
 
-public class Day {
 
+public class Day implements Parcelable {
+
+    public static final Creator<Day> CREATOR = new Creator<Day>() {
+        @Override
+        public Day createFromParcel(Parcel in) {
+            return new Day(in);
+        }
+
+        @Override
+        public Day[] newArray(int size) {
+            return new Day[size];
+        }
+    };
     private long mTime;
     private String mSummary;
     private String mIcon;
@@ -52,6 +71,49 @@ public class Day {
 
     public Day(String timeZone) {
         mTimeZone = timeZone;
+    }
+
+    protected Day(Parcel in) {
+        mTime = in.readLong();
+        mSummary = in.readString();
+        mIcon = in.readString();
+        mSunriseTime = in.readLong();
+        mSunsetTime = in.readLong();
+        mMoonPhase = in.readDouble();
+        mPrecipIntensity = in.readDouble();
+        mPrecipIntensityMax = in.readDouble();
+        mPrecipIntensityMaxTime = in.readLong();
+        mPrecipProbability = in.readDouble();
+        mPrecipType = in.readString();
+        mTemperatureHigh = in.readDouble();
+        mTemperatureHighTime = in.readLong();
+        mTemperatureLow = in.readDouble();
+        mTemperatureLowTime = in.readLong();
+        mApparentTemperatureHigh = in.readDouble();
+        mApparentTemperatureHighTime = in.readLong();
+        mApparentTemperatureLow = in.readDouble();
+        mApparentTemperatureLowTime = in.readLong();
+        mDewPoint = in.readDouble();
+        mHumidity = in.readDouble();
+        mPressure = in.readDouble();
+        mWindSpeed = in.readDouble();
+        mWindGust = in.readDouble();
+        mWindGustTime = in.readLong();
+        mWindBearing = in.readLong();
+        mCloudCover = in.readDouble();
+        mUvIndex = in.readInt();
+        mUvIndexTime = in.readLong();
+        mVisibility = in.readDouble();
+        mOzone = in.readDouble();
+        mTemperatureMin = in.readDouble();
+        mTemperatureMinTime = in.readLong();
+        mTemperatureMax = in.readDouble();
+        mTemperatureMaxTime = in.readLong();
+        mApparentTemperatureMin = in.readDouble();
+        mApparentTemperatureMinTime = in.readLong();
+        mApparentTemperatureMax = in.readDouble();
+        mApparentTemperatureMaxTime = in.readLong();
+        mTimeZone = in.readString();
     }
 
     public long getTime() {
@@ -374,6 +436,20 @@ public class Day {
         mTimeZone = timeZone;
     }
 
+    public int getIconId() {
+
+        return Forecast.getIconId(mIcon);
+    }
+
+    public String getDayOfTheWeek() {
+        SimpleDateFormat format = new SimpleDateFormat("EEEE");
+        format.setTimeZone(TimeZone.getTimeZone(mTimeZone));
+        Date date = new Date(mTime * 1000);
+
+        return format.format(date);
+
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -510,5 +586,71 @@ public class Day {
                 ", mTemperatureMin=" + mTemperatureMin +
                 ", mTemperatureMax=" + mTemperatureMax +
                 '}';
+    }
+
+    /**
+     * Describe the kinds of special objects contained in this Parcelable
+     * instance's marshaled representation. For example, if the object will
+     * include a file descriptor in the output of {@link #writeToParcel(Parcel, int)},
+     * the return value of this method must include the
+     * {@link #CONTENTS_FILE_DESCRIPTOR} bit.
+     *
+     * @return a bitmask indicating the set of special object types marshaled
+     * by this Parcelable object instance.
+     */
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    /**
+     * Flatten this object in to a Parcel.
+     *
+     * @param dest  The Parcel in which the object should be written.
+     * @param flags Additional flags about how the object should be written.
+     *              May be 0 or {@link #PARCELABLE_WRITE_RETURN_VALUE}.
+     */
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(mTime);
+        dest.writeString(mSummary);
+        dest.writeString(mIcon);
+        dest.writeLong(mSunriseTime);
+        dest.writeLong(mSunsetTime);
+        dest.writeDouble(mMoonPhase);
+        dest.writeDouble(mPrecipIntensity);
+        dest.writeDouble(mPrecipIntensityMax);
+        dest.writeLong(mPrecipIntensityMaxTime);
+        dest.writeDouble(mPrecipProbability);
+        dest.writeString(mPrecipType);
+        dest.writeDouble(mTemperatureHigh);
+        dest.writeLong(mTemperatureHighTime);
+        dest.writeDouble(mTemperatureLow);
+        dest.writeLong(mTemperatureLowTime);
+        dest.writeDouble(mApparentTemperatureHigh);
+        dest.writeLong(mApparentTemperatureHighTime);
+        dest.writeDouble(mApparentTemperatureLow);
+        dest.writeLong(mApparentTemperatureLowTime);
+        dest.writeDouble(mDewPoint);
+        dest.writeDouble(mHumidity);
+        dest.writeDouble(mPressure);
+        dest.writeDouble(mWindSpeed);
+        dest.writeDouble(mWindGust);
+        dest.writeLong(mWindGustTime);
+        dest.writeLong(mWindBearing);
+        dest.writeDouble(mCloudCover);
+        dest.writeInt(mUvIndex);
+        dest.writeLong(mUvIndexTime);
+        dest.writeDouble(mVisibility);
+        dest.writeDouble(mOzone);
+        dest.writeDouble(mTemperatureMin);
+        dest.writeLong(mTemperatureMinTime);
+        dest.writeDouble(mTemperatureMax);
+        dest.writeLong(mTemperatureMaxTime);
+        dest.writeDouble(mApparentTemperatureMin);
+        dest.writeLong(mApparentTemperatureMinTime);
+        dest.writeDouble(mApparentTemperatureMax);
+        dest.writeLong(mApparentTemperatureMaxTime);
+        dest.writeString(mTimeZone);
     }
 }

@@ -1,6 +1,7 @@
 package org.vilchezruben.climatix.ui;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -34,6 +35,7 @@ import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity {
 
+    public static final String DAILY_FORECAST = "DAILY_FORECAST";
     private final String TAG = MainActivity.class.getSimpleName();
     private final String apikey = "4c34a5e97de8707b362a05691b22f49b";
     @BindView(R.id.temperatureLabel)
@@ -297,6 +299,9 @@ public class MainActivity extends AppCompatActivity {
 
     @OnClick(R.id.dailyButton)
     public void startDailyActivity(View view) {
+        Intent intent = new Intent(this, DailyForecastActivity.class);
+        intent.putExtra("DAILY_FORECAST", mForecast.getDays());
+        startActivity(intent);
 
     }
 
