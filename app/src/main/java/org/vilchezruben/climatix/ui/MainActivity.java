@@ -67,12 +67,12 @@ public class MainActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         clientHttp = new OkHttpClient();
 
-        getForecast(mLatitude, mLongitude);
+        getForecast();
 
 
     }
 
-    private void getForecast(final double latitude, double longitude) {
+    private void getForecast() {
 
         Request request = new Request.Builder().url(foreCastUrl).build();
         if (isNetWorkAvailable()) {
@@ -294,7 +294,7 @@ public class MainActivity extends AppCompatActivity {
 
     @OnClick(R.id.refreshImageView)
     public void onClickRefreshImageView(View view) {
-        getForecast(mLatitude, mLongitude);
+        getForecast();
     }
 
     @OnClick(R.id.dailyButton)

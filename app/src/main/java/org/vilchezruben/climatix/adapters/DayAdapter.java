@@ -32,7 +32,7 @@ public class DayAdapter extends BaseAdapter {
      */
     @Override
     public int getCount() {
-        return 0;
+        return mDays.length;
     }
 
     /**
@@ -99,7 +99,7 @@ public class DayAdapter extends BaseAdapter {
         }
         holder.iconImageView.setImageResource(day.getIconId());
         holder.temperatureLabel.setText(day.getTemperatureMax() + "");
-        return null;
+        return convertView;
     }
 
     private static class ViewHolder {
