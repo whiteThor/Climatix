@@ -3,6 +3,9 @@ package org.vilchezruben.climatix.weather;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
  * Created by Vilchez Ruben on 14/03/2018.
  */
@@ -119,8 +122,9 @@ public class Hour implements Parcelable {
         this.precipType = precipType;
     }
 
-    public double getTemperature() {
-        return temperature;
+    public int getTemperature() {
+        int temperatureCentigrade = (int) Math.round((temperature - 32) * 5 / 9);
+        return (int) Math.round(temperatureCentigrade);
     }
 
     public void setTemperature(double temperature) {
@@ -215,85 +219,12 @@ public class Hour implements Parcelable {
         this.ozone = ozone;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Hour)) return false;
-
-        Hour hour = (Hour) o;
-
-        if (getTime() != hour.getTime()) return false;
-        if (Double.compare(hour.getPrecipIntensity(), getPrecipIntensity()) != 0) return false;
-        if (Double.compare(hour.getPrecipProbability(), getPrecipProbability()) != 0) return false;
-        if (Double.compare(hour.getTemperature(), getTemperature()) != 0) return false;
-        if (Double.compare(hour.getApparentTemperature(), getApparentTemperature()) != 0)
-            return false;
-        if (Double.compare(hour.getDewPoint(), getDewPoint()) != 0) return false;
-        if (Double.compare(hour.getHumidity(), getHumidity()) != 0) return false;
-        if (Double.compare(hour.getPressure(), getPressure()) != 0) return false;
-        if (Double.compare(hour.getWindSpeed(), getWindSpeed()) != 0) return false;
-        if (Double.compare(hour.getWindGust(), getWindGust()) != 0) return false;
-        if (Double.compare(hour.getWindBearing(), getWindBearing()) != 0) return false;
-        if (Double.compare(hour.getCloudCover(), getCloudCover()) != 0) return false;
-        if (getUvIndex() != hour.getUvIndex()) return false;
-        if (Double.compare(hour.getVisibility(), getVisibility()) != 0) return false;
-        if (Double.compare(hour.getOzone(), getOzone()) != 0) return false;
-        if (getSummary() != null ? !getSummary().equals(hour.getSummary()) : hour.getSummary() != null)
-            return false;
-        if (getIcon() != null ? !getIcon().equals(hour.getIcon()) : hour.getIcon() != null)
-            return false;
-        return getPrecipType() != null ? getPrecipType().equals(hour.getPrecipType()) : hour.getPrecipType() == null;
+    public String getHour() {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("h a");
+        Date date = new Date(time * 1000);
+        return simpleDateFormat.format(date);
     }
 
-    @Override
-    public int hashCode() {
-        int result;
-        long temp;
-        result = (int) (getTime() ^ (getTime() >>> 32));
-        result = 31 * result + (getSummary() != null ? getSummary().hashCode() : 0);
-        result = 31 * result + (getIcon() != null ? getIcon().hashCode() : 0);
-        temp = Double.doubleToLongBits(getPrecipIntensity());
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
-        temp = Double.doubleToLongBits(getPrecipProbability());
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
-        result = 31 * result + (getPrecipType() != null ? getPrecipType().hashCode() : 0);
-        temp = Double.doubleToLongBits(getTemperature());
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
-        temp = Double.doubleToLongBits(getApparentTemperature());
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
-        temp = Double.doubleToLongBits(getDewPoint());
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
-        temp = Double.doubleToLongBits(getHumidity());
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
-        temp = Double.doubleToLongBits(getPressure());
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
-        temp = Double.doubleToLongBits(getWindSpeed());
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
-        temp = Double.doubleToLongBits(getWindGust());
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
-        temp = Double.doubleToLongBits(getWindBearing());
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
-        temp = Double.doubleToLongBits(getCloudCover());
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
-        result = 31 * result + (int) (getUvIndex() ^ (getUvIndex() >>> 32));
-        temp = Double.doubleToLongBits(getVisibility());
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
-        temp = Double.doubleToLongBits(getOzone());
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
-        return result;
-    }
-
-    @Override
-    public String toString() {
-        return "Hour{" +
-                "time=" + time +
-                ", summary='" + summary + '\'' +
-                ", icon='" + icon + '\'' +
-                ", precipProbability=" + precipProbability +
-                ", precipType='" + precipType + '\'' +
-                ", temperature=" + temperature +
-                '}';
-    }
 
     public String getTimeZone() {
         return mTimeZone;
@@ -302,6 +233,7 @@ public class Hour implements Parcelable {
     public void setTimeZone(String timeZone) {
         mTimeZone = timeZone;
     }
+
 
     /**
      * Describe the kinds of special objects contained in this Parcelable
@@ -346,5 +278,9 @@ public class Hour implements Parcelable {
         dest.writeDouble(visibility);
         dest.writeDouble(ozone);
         dest.writeString(mTimeZone);
+    }
+
+    public int getIconId() {
+        return Forecast.getIconId(icon);
     }
 }

@@ -1,15 +1,32 @@
 package org.vilchezruben.climatix.adapters;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import org.vilchezruben.climatix.R;
+import org.vilchezruben.climatix.weather.Hour;
 
 /**
  * Created by Vilchez Ruben on 21/03/2018.
  */
 
 public class HourAdapter extends BaseAdapter {
+    private Context mContext;
+    private Hour[] mHours;
+
+    public HourAdapter() {
+    }
+
+    public HourAdapter(Context context, Hour[] hours) {
+        mContext = context;
+        mHours = hours;
+    }
+
     /**
      * How many items are in the data set represented by this Adapter.
      *
@@ -17,7 +34,7 @@ public class HourAdapter extends BaseAdapter {
      */
     @Override
     public int getCount() {
-        return 0;
+        return mHours.length;
     }
 
     /**
@@ -29,7 +46,7 @@ public class HourAdapter extends BaseAdapter {
      */
     @Override
     public Object getItem(int position) {
-        return null;
+        return mHours[position];
     }
 
     /**
@@ -63,6 +80,38 @@ public class HourAdapter extends BaseAdapter {
      */
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        return null;
+        HourAdapter.ViewHolder holder;
+
+        if (convertView == null) {
+            convertView = LayoutInflater.from(mContext).inflate(R.layout.hourly_list_item, null);
+            holder = new HourAdapter.ViewHolder();
+            holder.iconImageView = (ImageView) convertView.findViewById(R.id.iconImageView);
+            holder.temperatureLabel = (TextView) convertView.findViewById(R.id.temperatureLabel);
+            holder.timeLabel = (TextView) convertView.findViewById(R.id.timeLabel);
+            holder.summaryLabel = (TextView) convertView.findViewById(R.id.summaryLabel);
+            convertView.setTag(holder);
+        } else {
+            holder = (HourAdapter.ViewHolder) convertView.getTag();
+        }
+
+        Hour hour = mHours[position];
+        if (position == 0) {
+            holder.timeLabel.setText("Now");
+        } else {
+            holder.timeLabel.setText(hour.getHour());
+        }
+        holder.iconImageView.setImageResource(hour.getIconId());
+        holder.temperatureLabel.setText(hour.getTemperature() + "");
+        holder.summaryLabel.setText(hour.getSummary());
+        return convertView;
+    }
+
+    private static class ViewHolder {
+        ImageView iconImageView;
+        TextView timeLabel;
+        TextView summaryLabel;
+        TextView temperatureLabel;
+
+
     }
 }

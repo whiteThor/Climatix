@@ -380,8 +380,9 @@ public class Day implements Parcelable {
         mTemperatureMinTime = temperatureMinTime;
     }
 
-    public double getTemperatureMax() {
-        return mTemperatureMax;
+    public int getTemperatureMax() {
+        int temperatureCentigrade = (int) Math.round((mTemperatureMax - 32) * 5 / 9);
+        return (int) Math.round(temperatureCentigrade);
     }
 
     public void setTemperatureMax(double temperatureMax) {
