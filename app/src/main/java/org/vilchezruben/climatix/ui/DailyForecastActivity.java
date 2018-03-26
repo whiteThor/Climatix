@@ -56,4 +56,6 @@ public class DailyForecastActivity extends ListActivity {
         Toast.makeText(this, message, Toast.LENGTH_LONG);
 
     }
+
+
 }
