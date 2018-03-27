@@ -131,8 +131,9 @@ public class Hour implements Parcelable {
         this.temperature = temperature;
     }
 
-    public double getApparentTemperature() {
-        return apparentTemperature;
+    public int getApparentTemperature() {
+        int temperatureCentigrade = (int) Math.round((apparentTemperature - 32) * 5 / 9);
+        return (int) Math.round(temperatureCentigrade);
     }
 
     public void setApparentTemperature(double apparentTemperature) {

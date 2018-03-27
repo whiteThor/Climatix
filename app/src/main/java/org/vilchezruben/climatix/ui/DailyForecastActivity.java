@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.vilchezruben.climatix.R;
@@ -14,18 +15,24 @@ import org.vilchezruben.climatix.weather.Day;
 
 import java.util.Arrays;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class DailyForecastActivity extends ListActivity {
+    @BindView(R.id.locationLabel)
+    TextView mLocationLabel;
     private Day[] mDays;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_daily_forecast);
+        ButterKnife.bind(this);
         Intent intent = getIntent();
-
         Parcelable[] parcelables = intent.getParcelableArrayExtra(MainActivity.DAILY_FORECAST);
 
         mDays = Arrays.copyOf(parcelables, parcelables.length, Day[].class);
+        mLocationLabel.setText(mDays[0].getTimeZone());
 
         DayAdapter dayAdapter = new DayAdapter(this, mDays);
         setListAdapter(dayAdapter);
@@ -53,7 +60,7 @@ public class DailyForecastActivity extends ListActivity {
 
         String message = String.format("On %s the hign will be %s and it will be %s", dayOfTheWeek, highTemperature, condition);
 
-        Toast.makeText(this, message, Toast.LENGTH_LONG);
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
 
     }
 

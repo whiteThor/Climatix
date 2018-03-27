@@ -51,8 +51,9 @@ public class HourlyForecastActivity extends ListActivity {
         String hourOfTheDay = mHours[position].getHour();
         String condition = mHours[position].getSummary();
         String highTemperature = mHours[position].getTemperature() + "";
+        String appatentTemperature = mHours[position].getApparentTemperature() + "";
 
-        String message = String.format("On %s the high will be %s and it will be %s", hourOfTheDay, highTemperature, condition);
+        String message = String.format("On %s the high will be %s and then apparent will be %s, it will be %s", hourOfTheDay, highTemperature, appatentTemperature, condition);
 
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }

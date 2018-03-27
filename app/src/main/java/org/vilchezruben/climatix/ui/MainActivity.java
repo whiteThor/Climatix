@@ -1,11 +1,20 @@
 package org.vilchezruben.climatix.ui;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -37,7 +46,11 @@ public class MainActivity extends AppCompatActivity {
 
     public static final String DAILY_FORECAST = "DAILY_FORECAST";
     public static final String HOURLY_FORECAST = "HOURLY_FORECAST";
-
+    private static final String[] INITIAL_PERMS = {
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.READ_CONTACTS
+    };
+    private static final int INITIAL_REQUEST = 1337;
     private final String TAG = MainActivity.class.getSimpleName();
     private final String apikey = "4c34a5e97de8707b362a05691b22f49b";
     @BindView(R.id.temperatureLabel)
@@ -52,15 +65,55 @@ public class MainActivity extends AppCompatActivity {
     TextView mPrecipValue;
     @BindView(R.id.summaryLabel)
     TextView mSummaryLabel;
+    @BindView(R.id.locationLabel)
+    TextView mLocationLabel;
     @BindView(R.id.progressBar)
     ProgressBar mProgressBar;
     @BindView(R.id.refreshImageView)
     ImageView mImageRefress;
+    LocationManager locationManager;
     private double mLatitude = 4.598889;
     private double mLongitude = -74.080833;
-    String foreCastUrl = "https://api.darksky.net/forecast/" + apikey + "/" + mLatitude + "," + mLongitude;
     private OkHttpClient clientHttp;
     private Forecast mForecast;
+    private final LocationListener locationListenerGPS = new LocationListener() {
+        public void onLocationChanged(Location location) {
+            mLongitude = location.getLongitude();
+            mLatitude = location.getLatitude();
+            getForecast();
+
+        }
+
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+
+        }
+
+        /**
+         * Called when the provider is enabled by the user.
+         *
+         * @param provider the name of the location provider associated with this
+         *                 update.
+         */
+        @Override
+        public void onProviderEnabled(String provider) {
+
+        }
+
+        /**
+         * Called when the provider is disabled by the user. If requestLocationUpdates
+         * is called on an already disabled provider, this method is called
+         * immediately.
+         *
+         * @param provider the name of the location provider associated with this
+         *                 update.
+         */
+        @Override
+        public void onProviderDisabled(String provider) {
+
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,14 +121,33 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         clientHttp = new OkHttpClient();
-
-        getForecast();
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        requestPermissions(INITIAL_PERMS, INITIAL_REQUEST);
 
 
     }
 
-    private void getForecast() {
+    @SuppressLint("MissingPermission")
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
 
+        if (canAccessLocation())
+            locationManager.requestLocationUpdates(
+                    LocationManager.GPS_PROVIDER, 2 * 20 * 1000, 10, locationListenerGPS);
+
+
+    }
+
+    private boolean canAccessLocation() {
+        return (hasPermission(Manifest.permission.ACCESS_FINE_LOCATION));
+    }
+
+    private boolean hasPermission(String perm) {
+        return (PackageManager.PERMISSION_GRANTED == checkSelfPermission(perm));
+    }
+
+    private void getForecast() {
+        String foreCastUrl = "https://api.darksky.net/forecast/" + apikey + "/" + mLatitude + "," + mLongitude;
         Request request = new Request.Builder().url(foreCastUrl).build();
         if (isNetWorkAvailable()) {
             toogleRefresh();
@@ -147,6 +219,7 @@ public class MainActivity extends AppCompatActivity {
         mHumidityValue.setText(current.getHumidity() + "");
         mPrecipValue.setText(current.getPrecipProbability() + "");
         mSummaryLabel.setText(current.getSummary());
+        mLocationLabel.setText(current.getTimeZone().split("/")[1]);
 
     }
 
@@ -172,7 +245,6 @@ public class MainActivity extends AppCompatActivity {
         return isAvailable;
     }
 
-
     private Forecast parseForecastDetail(String jsonData) throws JSONException {
         JSONObject jsonObject = new JSONObject(jsonData);
         Forecast forecast = new Forecast();
@@ -196,7 +268,7 @@ public class MainActivity extends AppCompatActivity {
             hour.setIcon(jsonHour.getString("icon"));
             hour.setPrecipIntensity(jsonHour.getDouble("precipIntensity"));
             hour.setPrecipProbability(jsonHour.getDouble("precipProbability"));
-            hour.setPrecipType(jsonHour.getString("precipType"));
+            hour.setPrecipType(!jsonHour.isNull("precipType") ? jsonHour.getString("precipType") : "-");
             hour.setTemperature(jsonHour.getDouble("temperature"));
             hour.setApparentTemperature(jsonHour.getDouble("apparentTemperature"));
             hour.setDewPoint(jsonHour.getDouble("dewPoint"));
@@ -232,7 +304,7 @@ public class MainActivity extends AppCompatActivity {
             day.setPrecipIntensityMax(jsonDay.getDouble("precipIntensityMax"));
             day.setPrecipIntensityMaxTime(jsonDay.getLong("precipIntensityMaxTime"));
             day.setPrecipProbability(jsonDay.getDouble("precipProbability"));
-            day.setPrecipType(jsonDay.getString("precipType"));
+            day.setPrecipType(!jsonDay.isNull("precipType") ? jsonDay.getString("precipType") : "-");
             day.setTemperatureHigh(jsonDay.getLong("temperatureHigh"));
             day.setTemperatureHighTime(jsonDay.getLong("temperatureHighTime"));
             day.setTemperatureLow(jsonDay.getDouble("temperatureLow"));
@@ -276,7 +348,7 @@ public class MainActivity extends AppCompatActivity {
         current.setIcon(currently.getString("icon"));
         current.setPrecipIntensity(currently.getDouble("precipIntensity"));
         current.setPrecipProbability(currently.getDouble("precipProbability"));
-        current.setPrecipType(currently.getString("precipType"));
+        current.setPrecipType(!currently.isNull("precipType") ? currently.getString("precipType") : "-");
         current.setTemperature(currently.getDouble("temperature"));
         current.setApparentTemperature(currently.getDouble("apparentTemperature"));
         current.setDewPoint(currently.getDouble("dewPoint"));
@@ -315,4 +387,34 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private boolean checkLocation() {
+        if (!isLocationEnabled())
+            showAlert();
+        return isLocationEnabled();
+    }
+
+    private void showAlert() {
+        final AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        dialog.setTitle("Enable Location")
+                .setMessage("Su ubicación esta desactivada.\npor favor active su ubicación " +
+                        "usa esta app")
+                .setPositiveButton("Configuración de ubicación", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                        Intent myIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                        startActivity(myIntent);
+                    }
+                })
+                .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                    }
+                });
+        dialog.show();
+    }
+
+    private boolean isLocationEnabled() {
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
+                locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+    }
 }
